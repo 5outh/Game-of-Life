@@ -56,69 +56,24 @@ function get_next(cur_array)
 	for i = 1, xNodes do
 		for j = 1, yNodes do
 			neighbors = 0
-			if(i == 1) then
-				neighbors = neighbors + array[xNodes][j]
-				if(j == 1) then
-					neighbors = neighbors + array[xNodes][yNodes]
-			    else 
-					neighbors = neighbors + array[xNodes][j-1]
-				end
-			else
-				if(j == 1) then
-					neighbors = neighbors + array[i-1][yNodes]
-				else
-					neighbors = neighbors + array[i-1][j-1]
-				end
-				neighbors = neighbors + array[i-1][j]
-			end
 			
-			if(j == 1) then
-				neighbors = neighbors + array[i][yNodes]
-			else
-				neighbors = neighbors + array[i][j-1]
-			end
-			
-			-- done
+			left = i == 1
+			right = i == xNodes
+			bottom = j == yNodes
+			top = j == 1
 			
 			if(i < xNodes) then
-				neighbors = neighbors + array[i+1][j]
-				if(j == 1) then
-					neighbors = neighbors + array[i+1][yNodes]
-				else
-					neighbors = neighbors + array[i+1][j-1]
-				end
-				
-				if(j == yNodes) then
-					
-					neighbors = neighbors + array[1][1]
-				else
-					neighbors = neighbors + array[i+1][j+1]
-				end
-			else
-				neighbors = neighbors + array[1][j]
-				if( j == 1) then
-					neighbors = neighbors + array[1][yNodes]
-				else
-					neighbors = neighbors + array[1][j-1]
-				end
-			end
-			
-			if (j <= yNodes-1) then
-				neighbors = neighbors + array[i][j+1]
-				if(i == 1) then
-					neighbors = neighbors + array[xNodes][j+1]
-				else
+				if(j < yNodes) then
+					neighbors = neighbors + array[i-1][j]
+					neighbors = neighbors + array[i-1][j-1]
 					neighbors = neighbors + array[i-1][j+1]
-				end
-			else
-				neighbors = neighbors + array[i][1]
-				if(i == 1) then
-					neighbors = neighbors+ array[xNodes][1]
-				else
-					neighbors = neighbors+ array[i-1][1]
+					neighbors = neighbors + array[i+1][j]
+					neighbors = neighbors + array[i+1][j+1]
+					neighbors = neighbors + array[i+1][j-1]
+					neighbors = neighbors + array[i][j-1]
+					neighbors = neighbors + array[i][j+1]
 				end
 			end
-			
 			-- handle node generation, update array
 			if array[i][j] == 1 then
 				if neighbors == 2 or neighbors == 3 then
