@@ -53,18 +53,71 @@ function get_next(cur_array)
 			newArray[i][j] = 0
 		end
 	end
-	for i = 1, xNodes-1 do
-		for j = 1, yNodes-1 do
+	for i = 1, xNodes do
+		for j = 1, yNodes do
 			neighbors = 0
+			if(i == 1) then
+				neighbors = neighbors + array[xNodes][j]
+				if(j == 1) then
+					neighbors = neighbors + array[xNodes][yNodes]
+			    else 
+					neighbors = neighbors + array[xNodes][j-1]
+				end
+			else
+				if(j == 1) then
+					neighbors = neighbors + array[i-1][yNodes]
+				else
+					neighbors = neighbors + array[i-1][j-1]
+				end
+				neighbors = neighbors + array[i-1][j]
+			end
 			
-			neighbors = neighbors + array[i-1][j]
-			neighbors = neighbors + array[i-1][j-1]
-			neighbors = neighbors + array[i-1][j+1]
-			neighbors = neighbors + array[i+1][j]
-			neighbors = neighbors + array[i+1][j+1]
-			neighbors = neighbors + array[i+1][j-1]
-			neighbors = neighbors + array[i][j-1]
-			neighbors = neighbors + array[i][j+1]
+			if(j == 1) then
+				neighbors = neighbors + array[i][yNodes]
+			else
+				neighbors = neighbors + array[i][j-1]
+			end
+			
+			-- done
+			
+			if(i < xNodes) then
+				neighbors = neighbors + array[i+1][j]
+				if(j == 1) then
+					neighbors = neighbors + array[i+1][yNodes]
+				else
+					neighbors = neighbors + array[i+1][j-1]
+				end
+				
+				if(j == yNodes) then
+					
+					neighbors = neighbors + array[1][1]
+				else
+					neighbors = neighbors + array[i+1][j+1]
+				end
+			else
+				neighbors = neighbors + array[1][j]
+				if( j == 1) then
+					neighbors = neighbors + array[1][yNodes]
+				else
+					neighbors = neighbors + array[1][j-1]
+				end
+			end
+			
+			if (j <= yNodes-1) then
+				neighbors = neighbors + array[i][j+1]
+				if(i == 1) then
+					neighbors = neighbors + array[xNodes][j+1]
+				else
+					neighbors = neighbors + array[i-1][j+1]
+				end
+			else
+				neighbors = neighbors + array[i][1]
+				if(i == 1) then
+					neighbors = neighbors+ array[xNodes][1]
+				else
+					neighbors = neighbors+ array[i-1][1]
+				end
+			end
 			
 			-- handle node generation, update array
 			if array[i][j] == 1 then
