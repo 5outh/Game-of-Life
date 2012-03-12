@@ -62,18 +62,78 @@ function get_next(cur_array)
 			bottom = j == yNodes
 			top = j == 1
 			
-			if(i < xNodes) then
-				if(j < yNodes) then
-					neighbors = neighbors + array[i-1][j]
-					neighbors = neighbors + array[i-1][j-1]
-					neighbors = neighbors + array[i-1][j+1]
-					neighbors = neighbors + array[i+1][j]
-					neighbors = neighbors + array[i+1][j+1]
-					neighbors = neighbors + array[i+1][j-1]
-					neighbors = neighbors + array[i][j-1]
-					neighbors = neighbors + array[i][j+1]
-				end
+			if left then
+				neighbors = neighbors + array[xNodes][j]
+			else
+				neighbors = neighbors + array[i-1][j]
 			end
+			
+			if right then
+				neighbors = neighbors + array[1][j]
+			else
+				neighbors = neighbors + array[i+1][j]
+			end
+			
+			if top then
+				neighbors = neighbors + array[i][yNodes]
+			else
+				neighbors = neighbors + array[i][j-1]
+			end
+			
+			if bottom then
+				neighbors = neighbors + array[i][1]
+			else
+				neighbors = neighbors + array[i][j+1]
+			end
+			
+			if left or bottom then
+				if left and bottom then
+					neighbors = neighbors + array[xNodes][1]
+				elseif left then
+					neighbors = neighbors + array[xNodes][j+1]
+				elseif bottom then
+					neighbors = neighbors + array[i-1][1]
+				end
+			else
+				neighbors = neighbors + array[i-1][j+1]
+			end
+			
+			if right or bottom then
+				if right and bottom then
+					neighbors = neighbors + array[1][1]
+				elseif right then
+					neighbors = neighbors + array[1][j+1]
+				elseif bottom then
+					neighbors = neighbors + array[i+1][1]
+				end
+			else
+				neighbors = neighbors + array[i+1][j+1]
+			end
+			
+			if top or left then
+				if top and left then
+					neighbors = neighbors + array[xNodes][yNodes]
+				elseif top then
+					neighbors = neighbors + array[i-1][yNodes]
+				elseif left then
+					neighbors = neighbors + array[xNodes][j-1]
+				end
+			else
+				neighbors = neighbors + array[i-1][j-1]
+			end
+			
+			if top or right then
+				if top and right then
+					neighbors = neighbors + array[1][yNodes]
+				elseif top then
+					neighbors = neighbors + array[i+1][yNodes]
+				elseif right then
+					neighbors = neighbors + array[1][j-1]
+				end
+			else
+				neighbors = neighbors + array[i+1][j-1]
+			end
+			
 			-- handle node generation, update array
 			if array[i][j] == 1 then
 				if neighbors == 2 or neighbors == 3 then
