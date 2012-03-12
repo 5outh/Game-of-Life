@@ -6,11 +6,12 @@ function love.load()
 	smallFont = love.graphics.newFont(12)
 	mediumFont = love.graphics.newFont(16)
 	
-	nodeSize = 2
-	xNodes = 450
-	yNodes = 300
-	xSize = xNodes * nodeSize
-	ySize = yNodes * nodeSize
+	
+	nodeSize = 12
+	xSize = 864
+	ySize = 576
+	xNodes = xSize /nodeSize
+	yNodes = ySize / nodeSize
 	
 	startButton = {
 		x = love.graphics.getWidth() - 200,
@@ -40,7 +41,6 @@ function love.load()
 	rainbowMode = false
 	musicOn = false
 	
-	largeGrid()
 	love.graphics.setBackgroundColor(34, 32, 40)
 end
 
@@ -137,8 +137,6 @@ function love.draw(dt)
 	love.graphics.rectangle('fill', startButton.x, startButton.y, startButton.width, startButton.height)
 	love.graphics.rectangle('fill', 0, love.graphics.getHeight()/12,  love.graphics.getWidth(), love.graphics.getHeight()/192)
 	
-	drawSquares()
-	
 	if(not rainbowMode) then
 		love.graphics.setColor(255, 248, 211) -- off-white
 		love.graphics.setFont(mediumFont)
@@ -151,43 +149,6 @@ function love.draw(dt)
 	
 	--love.graphics.print(love.mouse.getX()..','..love.mouse.getY(), love.mouse.getX(), love.mouse.getY())
 	
-end
-
-function drawSquares()
-	smallSquare.x = 20
-	for i = 0, 2 do
-		message = ""
-		if i == 0 then
-			message = "S"
-		elseif i == 1 then
-			message = "M"
-		else message = "F"
-		end
-		love.graphics.rectangle('fill', smallSquare.x, smallSquare.y, smallSquare.width, smallSquare.height)
-		love.graphics.setColor(255, 248, 211) -- off-white
-		love.graphics.print(message, smallSquare.x + 5, smallSquare.y + 4, 0)
-		smallSquare.x = smallSquare.x + 40
-		love.graphics.setColor(47, 56, 55) -- top banner underline, start button
-	end
-	
-	love.graphics.print("Speed", 50, 12, 0)
-	love.graphics.print("Size", 255, 12, 0)
-	
-	smallSquare.x = smallSquare.x + 80
-	for i = 0, 2 do
-		message = ""
-		if i == 0 then
-			message = "S"
-		elseif i == 1 then
-			message = "M"
-		else message = "L"
-		end
-		love.graphics.rectangle('fill', smallSquare.x, smallSquare.y, smallSquare.width, smallSquare.height)
-		love.graphics.setColor(255, 248, 211) -- off-white
-		love.graphics.print(message, smallSquare.x + 5, smallSquare.y + 4, 0)
-		smallSquare.x = smallSquare.x + 40
-		love.graphics.setColor(47, 56, 55) -- top banner underline, start button
-	end
 end
 
 function love.mousepressed(x, y, button)
@@ -221,20 +182,15 @@ function love.keypressed(key)
 			love.audio.pause(crush)
 		end
 	end
-	if key == "1" then
-		clearArray()
+	if key == "up" then
+		if nodeSize < 24 then
+			changeSize(6)
+		end
 	end
-	if key == "s" then
-		smallGrid()
-	end
-	if key == "m" then
-		mediumGrid()
-	end
-	if key == "l" then
-		largeGrid()
-	end
-	if key == "u" then
-		ultraLargeGrid()
+	if key == "down" then
+		if nodeSize > 6 then
+			changeSize(-6)
+		end
 	end
 end
 
@@ -248,54 +204,13 @@ function clearArray()
 	end
 end
 
-function smallGrid()
-	prevXNodes = xNodes
-	prevYNodes = yNodes
-
-	nodeSize = 25
-	xNodes = 36
-	yNodes = 24
-	xSize = xNodes * nodeSize
-	ySize = yNodes * nodeSize
-	
-	resize(prevXNodes, prevYNodes, xNodes, yNodes)
-end
-
-function largeGrid()
+function changeSize(x)
 	prevXNodes = xNodes
 	prevYNodes = yNodes
 	
-	nodeSize = 12
-	xNodes = 72
-	yNodes = 48
-	xSize = xNodes * nodeSize
-	ySize = yNodes * nodeSize
-	
-	resize(prevXNodes, prevYNodes, xNodes, yNodes)
-end
-
-function mediumGrid()
-	prevXNodes = xNodes
-	prevYNodes = yNodes
-	
-	nodeSize = 18
-	xNodes = 50
-	yNodes = 34
-	xSize = xNodes * nodeSize
-	ySize = yNodes * nodeSize
-	
-	resize(prevXNodes, prevYNodes, xNodes, yNodes)
-end
-
-function ultraLargeGrid()
-	prevXNodes = xNodes
-	prevYNodes = yNodes
-	
-	nodeSize = 4
-	xNodes = 225
-	yNodes = 150
-	xSize = xNodes * nodeSize
-	ySize = yNodes * nodeSize
+	nodeSize = nodeSize + x
+	xNodes = xSize / nodeSize
+	yNodes = ySize / nodeSize
 	
 	resize(prevXNodes, prevYNodes, xNodes, yNodes)
 end
