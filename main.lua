@@ -2,7 +2,7 @@ function love.load()
 	ggg = love.filesystem.load("Presets/GosperGliderGun.lua")
 	crush = love.audio.newSource("crush.mp3", "stream")
 	love.graphics.setMode(1000, 800, false, true, 8)
-	largeFont = love.graphics.newFont(24)
+	largeFont = love.graphics.newFont(36)
 	smallFont = love.graphics.newFont(12)
 	mediumFont = love.graphics.newFont(16)
 	
@@ -157,13 +157,14 @@ function love.update(dt)
 	if gameStarted then
 		array = get_next(array)
 	end
+	-- node population
 	if love.mouse.isDown("r", "l") then
 		 x = love.mouse.getX() - xPosition
 		 y = love.mouse.getY() - yPosition
 		 if x > 0 and y > 0 then
 			xCoordinate = (x - (x % nodeSize)) /nodeSize 
 			yCoordinate = (y - (y % nodeSize)) /nodeSize
-			if xCoordinate < #array and yCoordinate < #array[1]then
+			if xCoordinate < #array and yCoordinate < #array[1] then
 				if love.mouse.isDown("r") then
 					array[xCoordinate][yCoordinate] = 0
 				elseif love.mouse.isDown("l") then
@@ -188,31 +189,35 @@ function love.draw(dt)
 		step = step +nodeSize
 	end
 	
+	
 	love.graphics.setColor(255,248,211) -- nodes (off-white)
+	
 	for i = 1, xNodes-1 do
 		for j = 1, yNodes-1 do
 			if array[i][j] == 1 then
 				if rainbowMode then
 					love.graphics.setColor(math.random(255), math.random(255), math.random(255))
-					love.graphics.print("FUCKIN RAINBOWMODE", 360, 15, 0, 2)
 				end
 				love.graphics.rectangle('fill', i*nodeSize + xPosition, j*nodeSize + yPosition, nodeSize, nodeSize)
 			end
 		end
 	end
+	if rainbowMode then
+		love.graphics.setFont(largeFont)
+		love.graphics.print("FUCKIN RAINBOWMODE", 300, 80, 0)
+		love.graphics.setFont(mediumFont)
+	end
 	
 	love.graphics.setColor(47, 56, 55) -- top banner underline, start button
 	love.graphics.rectangle('fill', startButton.x, startButton.y, startButton.width, startButton.height)
 	love.graphics.rectangle('fill', 0, love.graphics.getHeight()/12,  love.graphics.getWidth(), love.graphics.getHeight()/192)
-	
-	if(not rainbowMode) then
-		love.graphics.setColor(255, 248, 211) -- off-white
-		love.graphics.setFont(mediumFont)
-		if(gameStarted) then
-			love.graphics.print("Pause Game", startButton.x + 35, startButton.y - 5 + startButton.height /3, 0)
-		else
-			love.graphics.print("Start Game", startButton.x + 35, startButton.y - 5 + startButton.height /3, 0)
-		end
+
+	love.graphics.setColor(255, 248, 211) -- off-white
+	love.graphics.setFont(mediumFont)
+	if(gameStarted) then
+		love.graphics.print("Pause Game", startButton.x + 35, startButton.y - 5 + startButton.height /3, 0)
+	else
+		love.graphics.print("Start Game", startButton.x + 35, startButton.y - 5 + startButton.height /3, 0)
 	end
 	
 	--love.graphics.print(love.mouse.getX()..','..love.mouse.getY(), love.mouse.getX(), love.mouse.getY())
