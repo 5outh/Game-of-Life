@@ -227,16 +227,20 @@ end
 function love.mousepressed(x, y, button)
    if button == "l" then
 		if(onButton(x, y, startButton)) then
-			if(rainbowMode) then
-				gameStarted = false
-				love.audio.pause(crush)
-				musicOn = false
-				rainbowMode = false
-			else
-				gameStarted = not gameStarted
-			end
+			startPause()
 		end
     end
+end
+
+function startPause()
+	if(rainbowMode) then
+		gameStarted = false
+		love.audio.pause(crush)
+		musicOn = false
+		rainbowMode = false
+	else
+		gameStarted = not gameStarted
+	end
 end
 
 function onButton(x, y, button)
@@ -254,6 +258,12 @@ function love.keypressed(key)
 		else
 			love.audio.pause(crush)
 		end
+	end
+	if key == "c" then
+		clearArray()
+	end
+	if key == "p" then
+		startPause()
 	end
 	if key == "up" then
 		if nodeSize < 24 then
@@ -319,6 +329,5 @@ function resize(xNodes, yNodes, newXNodes, newYNodes)
 			end
 		end
 	end
-		
 	array = newArray
 end
