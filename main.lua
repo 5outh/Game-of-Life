@@ -4,18 +4,26 @@ function love.load()
 	love.graphics.setMode(1000, 800, false, true, 8)
 	largeFont = love.graphics.newFont(24)
 	smallFont = love.graphics.newFont(12)
+	mediumFont = love.graphics.newFont(16)
 	
-	nodeSize = 12
-	xNodes = 75
-	yNodes = 50
+	nodeSize = 2
+	xNodes = 450
+	yNodes = 300
 	xSize = xNodes * nodeSize
 	ySize = yNodes * nodeSize
 	
 	startButton = {
+		x = love.graphics.getWidth() - 200,
+		y = 20,
+		width = 160,
+		height = 30
+	}
+	
+	smallSquare ={
+		width = 24,
+		height = 24,
 		x = 20,
-		y = 8,
-		width = love.graphics.getWidth()/3 - 20,
-		height = love.graphics.getHeight()/15
+		y = 32
 	}
 	
 	xPosition = (love.graphics.getWidth() - xSize- nodeSize) / 2
@@ -32,8 +40,8 @@ function love.load()
 	rainbowMode = false
 	musicOn = false
 	
+	largeGrid()
 	love.graphics.setBackgroundColor(34, 32, 40)
-	
 end
 
 function get_next(cur_array)
@@ -129,13 +137,15 @@ function love.draw(dt)
 	love.graphics.rectangle('fill', startButton.x, startButton.y, startButton.width, startButton.height)
 	love.graphics.rectangle('fill', 0, love.graphics.getHeight()/12,  love.graphics.getWidth(), love.graphics.getHeight()/192)
 	
+	drawSquares()
+	
 	if(not rainbowMode) then
 		love.graphics.setColor(255, 248, 211) -- off-white
-		love.graphics.setFont(largeFont)
+		love.graphics.setFont(mediumFont)
 		if(gameStarted) then
-			love.graphics.print("Pause Game", startButton.x + 80, startButton.y + startButton.height /3, 0)
+			love.graphics.print("Pause Game", startButton.x + 35, startButton.y - 5 + startButton.height /3, 0)
 		else
-			love.graphics.print("Start Game", startButton.x + 80, startButton.y + startButton.height /3, 0)
+			love.graphics.print("Start Game", startButton.x + 35, startButton.y - 5 + startButton.height /3, 0)
 		end
 	end
 	
@@ -143,21 +153,60 @@ function love.draw(dt)
 	
 end
 
+function drawSquares()
+	smallSquare.x = 20
+	for i = 0, 2 do
+		message = ""
+		if i == 0 then
+			message = "S"
+		elseif i == 1 then
+			message = "M"
+		else message = "F"
+		end
+		love.graphics.rectangle('fill', smallSquare.x, smallSquare.y, smallSquare.width, smallSquare.height)
+		love.graphics.setColor(255, 248, 211) -- off-white
+		love.graphics.print(message, smallSquare.x + 5, smallSquare.y + 4, 0)
+		smallSquare.x = smallSquare.x + 40
+		love.graphics.setColor(47, 56, 55) -- top banner underline, start button
+	end
+	
+	love.graphics.print("Speed", 50, 12, 0)
+	love.graphics.print("Size", 255, 12, 0)
+	
+	smallSquare.x = smallSquare.x + 80
+	for i = 0, 2 do
+		message = ""
+		if i == 0 then
+			message = "S"
+		elseif i == 1 then
+			message = "M"
+		else message = "L"
+		end
+		love.graphics.rectangle('fill', smallSquare.x, smallSquare.y, smallSquare.width, smallSquare.height)
+		love.graphics.setColor(255, 248, 211) -- off-white
+		love.graphics.print(message, smallSquare.x + 5, smallSquare.y + 4, 0)
+		smallSquare.x = smallSquare.x + 40
+		love.graphics.setColor(47, 56, 55) -- top banner underline, start button
+	end
+end
+
 function love.mousepressed(x, y, button)
    if button == "l" then
-		if(x >= startButton.x and x < startButton.x + startButton.width) then
-			if(y >= startButton.y and y <= startButton.y + startButton.height) then
-				if(rainbowMode) then
-					gameStarted = false
-					love.audio.pause(crush)
-					musicOn = false
-					rainbowMode = false
-				else
-					gameStarted = not gameStarted
-				end
+		if(onButton(x, y, startButton)) then
+			if(rainbowMode) then
+				gameStarted = false
+				love.audio.pause(crush)
+				musicOn = false
+				rainbowMode = false
+			else
+				gameStarted = not gameStarted
 			end
 		end
-   end
+    end
+end
+
+function onButton(x, y, button)
+	return x >= button.x and x < button.x + button.width and y >= button.y and y <= button.y + button.height
 end
 
 function love.keypressed(key)
@@ -175,6 +224,18 @@ function love.keypressed(key)
 	if key == "1" then
 		clearArray()
 	end
+	if key == "s" then
+		smallGrid()
+	end
+	if key == "m" then
+		mediumGrid()
+	end
+	if key == "l" then
+		largeGrid()
+	end
+	if key == "u" then
+		ultraLargeGrid()
+	end
 end
 
 function clearArray()
@@ -185,4 +246,91 @@ function clearArray()
 			array[i][j] = 0
 		end
 	end
+end
+
+function smallGrid()
+	prevXNodes = xNodes
+	prevYNodes = yNodes
+
+	nodeSize = 25
+	xNodes = 36
+	yNodes = 24
+	xSize = xNodes * nodeSize
+	ySize = yNodes * nodeSize
+	
+	resize(prevXNodes, prevYNodes, xNodes, yNodes)
+end
+
+function largeGrid()
+	prevXNodes = xNodes
+	prevYNodes = yNodes
+	
+	nodeSize = 12
+	xNodes = 72
+	yNodes = 48
+	xSize = xNodes * nodeSize
+	ySize = yNodes * nodeSize
+	
+	resize(prevXNodes, prevYNodes, xNodes, yNodes)
+end
+
+function mediumGrid()
+	prevXNodes = xNodes
+	prevYNodes = yNodes
+	
+	nodeSize = 18
+	xNodes = 50
+	yNodes = 34
+	xSize = xNodes * nodeSize
+	ySize = yNodes * nodeSize
+	
+	resize(prevXNodes, prevYNodes, xNodes, yNodes)
+end
+
+function ultraLargeGrid()
+	prevXNodes = xNodes
+	prevYNodes = yNodes
+	
+	nodeSize = 4
+	xNodes = 225
+	yNodes = 150
+	xSize = xNodes * nodeSize
+	ySize = yNodes * nodeSize
+	
+	resize(prevXNodes, prevYNodes, xNodes, yNodes)
+end
+
+
+function resize(xNodes, yNodes, newXNodes, newYNodes)
+	if xNodes <= newXNodes then
+		newArray = {0,0}
+		for i = 0, newXNodes do
+			newArray[i] = {}
+			for j = 0, newYNodes do
+				newArray[i][j] = 0
+			end
+		end
+		
+		for i = 0, xNodes do
+			for j = 0, yNodes do
+				newArray[i][j] = array[i][j]
+			end
+		end
+	else
+		newArray = {0,0}
+		for i = 0, xNodes do
+			newArray[i] = {}
+			for j = 0, yNodes do
+				newArray[i][j] = 0
+			end
+		end
+		
+		for i = 0, newXNodes do
+			for j = 0, newYNodes do
+				newArray[i][j] = array[i][j]
+			end
+		end
+	end
+		
+	array = newArray
 end
