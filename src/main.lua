@@ -1,11 +1,9 @@
 function love.load()
 	ggg = love.filesystem.load("presets/GosperGliderGun.lua")
 	crush = love.audio.newSource("crush.mp3", "stream")
-	love.graphics.setMode(1000, 800, false, true, 8)
+	love.graphics.setMode(1000, 800, false, true, 0)
 	largeFont = love.graphics.newFont(36)
-	smallFont = love.graphics.newFont(12)
 	mediumFont = love.graphics.newFont(16)
-	
 	
 	nodeSize = 12
 	xSize = 864
@@ -20,13 +18,6 @@ function love.load()
 		height = 30
 	}
 	
-	smallSquare ={
-		width = 24,
-		height = 24,
-		x = 20,
-		y = 32
-	}
-	
 	xPosition = (love.graphics.getWidth() - xSize- nodeSize) / 2
 	yPosition = (love.graphics.getHeight() - ySize- nodeSize) * 2/3
 
@@ -37,6 +28,7 @@ function love.load()
 			array[i][j] = 0
 		end
 	end
+	
 	gameStarted = false
 	rainbowMode = false
 	musicOn = false
@@ -45,7 +37,6 @@ function love.load()
 end
 
 function get_next(cur_array)
-	vals = ''
 	newArray = {}
 	for i = 0, xNodes do
 		newArray[i] = {}
@@ -53,6 +44,7 @@ function get_next(cur_array)
 			newArray[i][j] = 0
 		end
 	end
+	
 	for i = 1, xNodes do
 		for j = 1, yNodes do
 			neighbors = 0
@@ -186,7 +178,7 @@ function love.draw(dt)
 			love.graphics.line(nodeSize+xPosition, step+yPosition, xSize+xPosition, step+yPosition)
 		end
 		love.graphics.line(step+xPosition, nodeSize+yPosition, step+xPosition, ySize+yPosition)
-		step = step +nodeSize
+		step = step + nodeSize
 	end
 	
 	
@@ -244,6 +236,7 @@ function startPause()
 end
 
 function onButton(x, y, button)
+	-- button hit test
 	return x >= button.x and x < button.x + button.width and y >= button.y and y <= button.y + button.height
 end
 
@@ -300,6 +293,7 @@ end
 
 
 function resize(xNodes, yNodes, newXNodes, newYNodes)
+	-- handles graceful changes in grid size
 	if xNodes <= newXNodes then
 		newArray = {0,0}
 		for i = 0, newXNodes do
