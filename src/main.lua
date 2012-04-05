@@ -196,7 +196,7 @@ function love.draw(dt)
 	end
 	if rainbowMode then
 		love.graphics.setFont(largeFont)
-		love.graphics.print("FUCKIN RAINBOWMODE", 300, 80, 0)
+		love.graphics.print("RAINBOWMODE", 300, 80, 0)
 		love.graphics.setFont(mediumFont)
 	end
 	
