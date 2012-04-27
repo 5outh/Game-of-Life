@@ -1,5 +1,5 @@
 function love.load()
-	ggg = love.filesystem.load("presets/GosperGliderGun.lua")
+	ggg = love.filesystem.load("./presets/GosperGliderGun.lua")
 	crush = love.audio.newSource("crush.mp3", "stream")
 	love.graphics.setMode(1000, 800, false, true, 0)
 	largeFont = love.graphics.newFont(36)
