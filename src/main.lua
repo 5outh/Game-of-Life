@@ -1,4 +1,9 @@
+local arrayHandler 
+local drawing
+
 function love.load()
+	arrayHandler = require('arrayHandler')
+	drawing = require('drawing')
 	ggg = love.filesystem.load("presets/GosperGliderGun.lua")
 	crush = love.audio.newSource("crush.mp3", "stream")
 	love.graphics.setMode(1000, 800, false, true, 0)
@@ -21,13 +26,7 @@ function love.load()
 	xPosition = (love.graphics.getWidth() - xSize- nodeSize) / 2
 	yPosition = (love.graphics.getHeight() - ySize- nodeSize) * 2/3
 
-	array = {0,0}
-	for i = 0, xNodes do
-		array[i] = {}
-		for j = 0, yNodes do
-			array[i][j] = 0
-		end
-	end
+	arrayHandler.clearArray()
 	
 	gameStarted = false
 	rainbowMode = false
@@ -36,118 +35,9 @@ function love.load()
 	love.graphics.setBackgroundColor(34, 32, 40)
 end
 
-function get_next(cur_array)
-	newArray = {}
-	for i = 0, xNodes do
-		newArray[i] = {}
-		for j = 0, yNodes do
-			newArray[i][j] = 0
-		end
-	end
-	
-	for i = 1, xNodes do
-		for j = 1, yNodes do
-			neighbors = 0
-			
-			left = i == 1
-			right = i == xNodes
-			bottom = j == yNodes
-			top = j == 1
-			
-			if left then
-				neighbors = neighbors + array[xNodes][j]
-			else
-				neighbors = neighbors + array[i-1][j]
-			end
-			
-			if right then
-				neighbors = neighbors + array[1][j]
-			else
-				neighbors = neighbors + array[i+1][j]
-			end
-			
-			if top then
-				neighbors = neighbors + array[i][yNodes]
-			else
-				neighbors = neighbors + array[i][j-1]
-			end
-			
-			if bottom then
-				neighbors = neighbors + array[i][1]
-			else
-				neighbors = neighbors + array[i][j+1]
-			end
-			
-			if left or bottom then
-				if left and bottom then
-					neighbors = neighbors + array[xNodes][1]
-				elseif left then
-					neighbors = neighbors + array[xNodes][j+1]
-				elseif bottom then
-					neighbors = neighbors + array[i-1][1]
-				end
-			else
-				neighbors = neighbors + array[i-1][j+1]
-			end
-			
-			if right or bottom then
-				if right and bottom then
-					neighbors = neighbors + array[1][1]
-				elseif right then
-					neighbors = neighbors + array[1][j+1]
-				elseif bottom then
-					neighbors = neighbors + array[i+1][1]
-				end
-			else
-				neighbors = neighbors + array[i+1][j+1]
-			end
-			
-			if top or left then
-				if top and left then
-					neighbors = neighbors + array[xNodes][yNodes]
-				elseif top then
-					neighbors = neighbors + array[i-1][yNodes]
-				elseif left then
-					neighbors = neighbors + array[xNodes][j-1]
-				end
-			else
-				neighbors = neighbors + array[i-1][j-1]
-			end
-			
-			if top or right then
-				if top and right then
-					neighbors = neighbors + array[1][yNodes]
-				elseif top then
-					neighbors = neighbors + array[i+1][yNodes]
-				elseif right then
-					neighbors = neighbors + array[1][j-1]
-				end
-			else
-				neighbors = neighbors + array[i+1][j-1]
-			end
-			
-			-- handle node generation, update array
-			if array[i][j] == 1 then
-				if neighbors == 2 or neighbors == 3 then
-					newArray[i][j] = 1
-				else
-					newArray[i][j] = 0
-				end
-			elseif array[i][j] == 0 then
-				if neighbors == 3 then
-					newArray[i][j] = 1
-				else
-					newArray[i][j] = 0
-				end
-			end
-		end
-	end
-	return newArray
-end
-
 function love.update(dt)
 	if gameStarted then
-		array = get_next(array)
+		array = arrayHandler.get_next(array)
 	end
 	-- node population
 	if love.mouse.isDown("r", "l") then
@@ -168,51 +58,15 @@ function love.update(dt)
 end
 
 function love.draw(dt)
+	drawing.drawBase()
+	drawing.drawGrid()
+	drawing.drawArray()
 	
-	love.graphics.setColor(197, 199, 182) -- top banner and grid  (grey)
-	love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), love.graphics.getHeight()/12)
-	
-	step = nodeSize
-	while(step <= xSize) do
-		if(step <= ySize) then
-			love.graphics.line(nodeSize+xPosition, step+yPosition, xSize+xPosition, step+yPosition)
-		end
-		love.graphics.line(step+xPosition, nodeSize+yPosition, step+xPosition, ySize+yPosition)
-		step = step + nodeSize
-	end
-	
-	
-	love.graphics.setColor(255,248,211) -- nodes (off-white)
-	
-	for i = 1, xNodes-1 do
-		for j = 1, yNodes-1 do
-			if array[i][j] == 1 then
-				if rainbowMode then
-					love.graphics.setColor(math.random(255), math.random(255), math.random(255))
-				end
-				love.graphics.rectangle('fill', i*nodeSize + xPosition, j*nodeSize + yPosition, nodeSize, nodeSize)
-			end
-		end
-	end
 	if rainbowMode then
-		love.graphics.setFont(largeFont)
-		love.graphics.print("RAINBOWMODE", 300, 80, 0)
-		love.graphics.setFont(mediumFont)
+		drawing.drawRainbowMessage()
 	end
 	
-	love.graphics.setColor(47, 56, 55) -- top banner underline, start button
-	love.graphics.rectangle('fill', startButton.x, startButton.y, startButton.width, startButton.height)
-	love.graphics.rectangle('fill', 0, love.graphics.getHeight()/12,  love.graphics.getWidth(), love.graphics.getHeight()/192)
-
-	love.graphics.setColor(255, 248, 211) -- off-white
-	love.graphics.setFont(mediumFont)
-	if(gameStarted) then
-		love.graphics.print("Pause Game", startButton.x + 35, startButton.y - 5 + startButton.height /3, 0)
-	else
-		love.graphics.print("Start Game", startButton.x + 35, startButton.y - 5 + startButton.height /3, 0)
-	end
-	
-	--love.graphics.print(love.mouse.getX()..','..love.mouse.getY(), love.mouse.getX(), love.mouse.getY())
+	drawing.drawButton()
 	
 end
 
@@ -253,75 +107,19 @@ function love.keypressed(key)
 		end
 	end
 	if key == "c" then
-		clearArray()
+		arrayHandler.clearArray()
 	end
 	if key == "p" then
 		startPause()
 	end
 	if key == "up" then
 		if nodeSize < 24 then
-			changeSize(6)
+			arrayHandler.changeSize(6)
 		end
 	end
 	if key == "down" then
 		if nodeSize > 6 then
-			changeSize(-6)
+			arrayHandler.changeSize(-6)
 		end
 	end
-end
-
-function clearArray()
-	array = {0,0}
-	for i = 0, xNodes do
-		array[i] = {}
-		for j = 0, yNodes do
-			array[i][j] = 0
-		end
-	end
-end
-
-function changeSize(x)
-	prevXNodes = xNodes
-	prevYNodes = yNodes
-	
-	nodeSize = nodeSize + x
-	xNodes = xSize / nodeSize
-	yNodes = ySize / nodeSize
-	
-	resize(prevXNodes, prevYNodes, xNodes, yNodes)
-end
-
-
-function resize(xNodes, yNodes, newXNodes, newYNodes)
-	-- handles graceful changes in grid size
-	if xNodes <= newXNodes then
-		newArray = {0,0}
-		for i = 0, newXNodes do
-			newArray[i] = {}
-			for j = 0, newYNodes do
-				newArray[i][j] = 0
-			end
-		end
-		
-		for i = 0, xNodes do
-			for j = 0, yNodes do
-				newArray[i][j] = array[i][j]
-			end
-		end
-	else
-		newArray = {0,0}
-		for i = 0, xNodes do
-			newArray[i] = {}
-			for j = 0, yNodes do
-				newArray[i][j] = 0
-			end
-		end
-		
-		for i = 0, newXNodes do
-			for j = 0, newYNodes do
-				newArray[i][j] = array[i][j]
-			end
-		end
-	end
-	array = newArray
 end
